@@ -5,22 +5,23 @@ import (
 	"os"
 )
 
-type FafafReader struct{}
+type FafafReader struct {
+	state bool
+}
 
-func (fr FafafReader) Read(p []byte) (int, error) {
-	cycle := true
+func (fr *FafafReader) Read(p []byte) (int, error) {
 	for i := range p {
-		if cycle {
-			p[i] = 'f'
-		} else {
+		if fr.state {
 			p[i] = 'a'
+		} else {
+			p[i] = 'f'
 		}
-		cycle = !cycle
+		fr.state = !fr.state
 	}
 
 	return len(p), nil
 }
 
 func main() {
-	io.Copy(os.Stdout, FafafReader{})
+	io.Copy(os.Stdout, &FafafReader{})
 }
